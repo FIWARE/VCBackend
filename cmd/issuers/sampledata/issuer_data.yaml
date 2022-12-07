@@ -1,0 +1,9 @@
+- id:   "did:elsi:packetdeliveryco"
+  name: "Packet Delivery"
+  password: ThePassword
+- id:   "did:elsi:happypets"
+  name: "Happy Pets"
+  password: ThePassword
+- id:   "did:elsi:nocheaper"
+  name: "No Cheaper"
+  password: ThePassword

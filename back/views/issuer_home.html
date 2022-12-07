@@ -1,0 +1,39 @@
+{{define "issuer_home"}} {{template "partials/header" .}}
+
+<main class="w3-container">
+
+
+    {{if .credlist}}
+    <h3>Credentials</h3>
+
+    <div class="w3-row">
+        {{range .credlist}}
+
+        <div class="w3-half w3-container w3-margin-bottom">
+            <div class="w3-card-4">
+                <div class=" w3-container w3-margin-bottom color-primary">
+                    <h4>{{.Id}}</h4>
+                </div>
+
+                <div class="w3-container w3-padding-16">
+                    <a href="{{$.issuerPrefix}}/creddetails/{{.Id}}" class="btn-primary">Details</a>
+                    <a href="{{$.issuerPrefix}}/displayqrurl/{{.Id}}" class="btn-primary">QR</a>
+                </div>
+
+            </div>
+        </div>
+
+        {{end}}
+    </div>
+
+    {{else}}
+    <h3>There are no credentials</h3>
+    {{end}}
+
+    <div class="buttonfixed">
+        <a href="{{.issuerPrefix}}/newcredential" class="w3-btn w3-circle w3-xlarge color-primary">+</a>
+    </div>
+
+</main>
+
+{{template "partials/footer" .}} {{end}}

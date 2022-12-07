@@ -1,0 +1,29 @@
+- credName:             "PacketDeliveryCredential"
+#  jti:                  "https://pdc.i4trust.fiware.io/credentials/1872"
+  issuerDID:            "did:elsi:packetdeliveryco"
+#  issuerKeyID:          "here the key id"
+  subjectDID:           "did:uuid:09b8a75c-6e8a-4992-ad47-362311595ec5"
+  claims:
+    name:               "Perico Perez"
+    given_name:         "Perico"
+    family_name:        "Perez"
+    preferred_username: "Pepe"
+    email:              "pepe.perez@gmaily.com"
+    roles:
+    - target:           "did:elsi:EU.EORI.NLMARKETPLA"
+      names:            ["seller", "buyer"]
+
+- credName:             "PacketDeliveryCredential"
+#  jti:                  "https://pdc.i4trust.fiware.io/credentials/1872"
+  issuerDID:            "did:elsi:packetdeliveryco"
+#  issuerKeyID:          "here the key id"
+  subjectDID:           "did:uuid:09b8a75c-6e8a-4992-ad47-362311595ec5"
+  claims:
+    name:               "Juan Juanez"
+    given_name:         "Juan"
+    family_name:        "Juanez"
+    preferred_username: "john"
+    email:              "juan.juanez@gmaily.com"
+    roles:
+    - target:           "did:elsi:EU.EORI.NLMARKETPLA"
+      names:            ["seller"]

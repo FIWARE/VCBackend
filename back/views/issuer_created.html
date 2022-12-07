@@ -1,0 +1,23 @@
+{{define "created"}} {{template
+    "partials/header" .}}
+    
+    <main>
+      <div class="w3-container w3-padding-48">
+        <div class="w3-card-4 w3-half-centered">
+          <div class="w3-container w3-margin-bottom color-primary">
+            <h4>This is the credential ID</h4>
+          </div>
+    
+          <div class="w3-container w3-margin-bottom">
+            <p>{{.credID}}</p>
+          </div>
+    
+          <div class="w3-container w3-padding-16">
+            <a href="/issuer" class="btn-primary">Home</a>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    {{template "partials/footer" .}} {{end}}
+    
