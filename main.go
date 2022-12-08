@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -21,7 +20,9 @@ import (
 	"log"
 
 	qrcode "github.com/skip2/go-qrcode"
+
 	"github.com/valyala/fasttemplate"
+	y "gopkg.in/yaml.v2"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -51,6 +52,16 @@ var (
 	configFile = flag.String("config", LookupEnvOrString("CONFIG_FILE", defaultConfigFile), "path to configuration file")
 	password   = flag.String("pass", LookupEnvOrString("PASSWORD", defaultPassword), "admin password for the server")
 )
+
+var SSIKit SSIKitConfig
+
+type SSIKitConfig struct {
+	coreUrl      string `yaml:"coreURL"`
+	signatoryUrl string `yaml:"signatoryUrl"`
+	auditorUrl   string `yaml:"auditorUrl"`
+	custodianUrl string `yaml:"custodianUrl"`
+	essifUrl     string `yaml:"essifUrl"`
+}
 
 // Server is the struct holding the state of the server
 type Server struct {
@@ -129,20 +140,21 @@ func run() {
 	s.issuerVault.CreateUserWithKey(cfg.String("issuer.id"), cfg.String("issuer.name"), "legalperson", cfg.String("issuer.password"))
 	s.verifierVault.CreateUserWithKey(cfg.String("verifier.id"), cfg.String("verifier.name"), "legalperson", cfg.String("verifier.password"))
 
-	ssiKitConfig := cfg.Map("ssikit")
-	if len(ssiKitConfig) == 0 {
+	ssiKitConfigYaml := yaml.New(cfg.Map("ssikit"))
+	err = y.Unmarshal(ssiKitConfigYaml, &SSIKit)
+	if err != nil {
 		s.logger.Error("No configuration for the ssikit was provided.")
-		panic(errors.New("invalid_config"))
+		panic(err)
 	}
 
 	// Create the DIDs for the issuer and verifier
-	s.issuerDID, err = operations.SSIKitCreateDID(yaml.New(ssiKitConfig), s.issuerVault, cfg.String("issuer.id"))
+	s.issuerDID, err = operations.SSIKitCreateDID(SSIKit.custodianUrl, s.issuerVault, cfg.String("issuer.id"))
 	if err != nil {
 		panic(err)
 	}
 	s.logger.Infow("IssuerDID created", "did", s.issuerDID)
 
-	s.verifierDID, err = operations.SSIKitCreateDID(yaml.New(ssiKitConfig), s.verifierVault, cfg.String("verifier.id"))
+	s.verifierDID, err = operations.SSIKitCreateDID(SSIKit.custodianUrl, s.verifierVault, cfg.String("verifier.id"))
 	if err != nil {
 		panic(err)
 	}
@@ -881,7 +893,7 @@ func (s *Server) IssuerPageNewCredentialFormPost(c *fiber.Ctx) error {
 	}
 
 	// Call the issuer of SSI Kit
-	agent := fiber.Post("http://localhost:7001/v1/credentials/issue")
+	agent := fiber.Post(SSIKit.signatoryUrl + "/v1/credentials/issue")
 
 	config := fiber.Map{
 		"issuerDid":  issuerDID,
@@ -1002,7 +1014,7 @@ func (srv *Server) CoreAPICreateDID(c *fiber.Ctx) error {
 	// body := c.Body()
 
 	// Call the SSI Kit
-	agent := fiber.Post("http://localhost:7003/did/create")
+	agent := fiber.Post(SSIKit.custodianUrl + "/did/create")
 	bodyRequest := fiber.Map{
 		"method": "key",
 	}
