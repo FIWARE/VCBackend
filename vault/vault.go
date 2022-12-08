@@ -60,8 +60,6 @@ func New(cfg *yaml.YAML) (v *Vault, err error) {
 		return nil, fmt.Errorf("no configuration received")
 	}
 
-	zlog.Info().Msg(fmt.Sprintf("%v", *cfg))
-
 	// Make sure only one thread performs initialization of the database,
 	// including migrations
 	mutexForNew.Lock()

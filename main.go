@@ -81,7 +81,7 @@ func main() {
 func run() {
 	var err error
 
-	// Create a the server instance
+	// Create the server instance
 	s := Server{}
 
 	// Read configuration file

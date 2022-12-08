@@ -19,10 +19,3 @@ COPY --from=build /go/src/app/vcbackend /go/src/app/vcbackend
 COPY --from=build /go/src/app/vault/templates /go/src/app/vault/templates
 
 CMD ["./vcbackend"]
-
-
-
-
-
-
-
