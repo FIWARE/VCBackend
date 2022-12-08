@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -46,10 +47,9 @@ const verifierPrefix = "/verifier/api/v1"
 const walletPrefix = "/wallet/api/v1"
 
 var (
-	port       = flag.String("port", ":8000", "Port to listen on")
 	prod       = flag.Bool("prod", false, "Enable prefork in Production")
-	configFile = flag.String("config", defaultConfigFile, "path to configuration file")
-	password   = flag.String("pass", defaultPassword, "admin password for the server")
+	configFile = flag.String("config", LookupEnvOrString("CONFIG_FILE", defaultConfigFile), "path to configuration file")
+	password   = flag.String("pass", LookupEnvOrString("PASSWORD", defaultPassword), "admin password for the server")
 )
 
 // Server is the struct holding the state of the server
@@ -67,6 +67,13 @@ type Server struct {
 	storage       *memory.Storage
 }
 
+func LookupEnvOrString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
+}
+
 func main() {
 	run()
 }
@@ -74,7 +81,7 @@ func main() {
 func run() {
 	var err error
 
-	// Create the server instance
+	// Create a the server instance
 	s := Server{}
 
 	// Read configuration file
@@ -122,14 +129,20 @@ func run() {
 	s.issuerVault.CreateUserWithKey(cfg.String("issuer.id"), cfg.String("issuer.name"), "legalperson", cfg.String("issuer.password"))
 	s.verifierVault.CreateUserWithKey(cfg.String("verifier.id"), cfg.String("verifier.name"), "legalperson", cfg.String("verifier.password"))
 
+	ssiKitConfig := cfg.Map("ssikit")
+	if len(ssiKitConfig) == 0 {
+		s.logger.Error("No configuration for the ssikit was provided.")
+		panic(errors.New("invalid_config"))
+	}
+
 	// Create the DIDs for the issuer and verifier
-	s.issuerDID, err = operations.SSIKitCreateDID(s.issuerVault, cfg.String("issuer.id"))
+	s.issuerDID, err = operations.SSIKitCreateDID(yaml.New(ssiKitConfig), s.issuerVault, cfg.String("issuer.id"))
 	if err != nil {
 		panic(err)
 	}
 	s.logger.Infow("IssuerDID created", "did", s.issuerDID)
 
-	s.verifierDID, err = operations.SSIKitCreateDID(s.verifierVault, cfg.String("verifier.id"))
+	s.verifierDID, err = operations.SSIKitCreateDID(yaml.New(ssiKitConfig), s.verifierVault, cfg.String("verifier.id"))
 	if err != nil {
 		panic(err)
 	}

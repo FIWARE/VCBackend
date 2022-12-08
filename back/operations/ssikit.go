@@ -5,13 +5,16 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/hesusruiz/vcbackend/vault"
+	"github.com/hesusruiz/vcutils/yaml"
 	"go.uber.org/zap"
 )
 
 var logger = zap.Must(zap.NewDevelopment())
 
-func SSIKitCreateDID(v *vault.Vault, userid string) (string, error) {
+func SSIKitCreateDID(config *yaml.YAML, v *vault.Vault, userid string) (string, error) {
 	defer logger.Sync()
+
+	custodianUrl := config.String("custodianURL")
 
 	// Create a new DID only if it does not exist
 	did, _ := v.GetDIDForUser(userid)
@@ -20,7 +23,7 @@ func SSIKitCreateDID(v *vault.Vault, userid string) (string, error) {
 	}
 
 	// Call the SSI Kit
-	agent := fiber.Post("http://localhost:7003/did/create")
+	agent := fiber.Post(custodianUrl + "/did/create")
 	bodyRequest := fiber.Map{
 		"method": "key",
 	}
