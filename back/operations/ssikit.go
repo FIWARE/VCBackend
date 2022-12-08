@@ -1,7 +1,9 @@
 package operations
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/hesusruiz/vcbackend/vault"
@@ -30,11 +32,15 @@ func SSIKitCreateDID(config *yaml.YAML, v *vault.Vault, userid string) (string, 
 	agent.JSON(bodyRequest)
 	agent.ContentType("application/json")
 	agent.Set("accept", "application/json")
-	_, returnBody, errors := agent.Bytes()
-	if len(errors) > 0 {
-		err := fmt.Errorf("error calling SSI Kit: %v", errors[0])
+	code, returnBody, reqErr := agent.Bytes()
+	if len(reqErr) > 0 {
+		err := fmt.Errorf("error calling SSI Kit: %v", reqErr[0])
 		logger.Error("error calling SSI Kit", zap.Error(err))
 		return "", err
+	}
+	if code != http.StatusOK {
+		logger.Error(fmt.Sprintf("Was not able to create the issuer. Status: %d, Message: %s", code, returnBody))
+		return "", errors.New("issuer_not_created")
 	}
 
 	did = string(returnBody)
