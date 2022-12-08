@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcissuer/ent/naturalperson"
-	"github.com/hesusruiz/vcissuer/ent/predicate"
+	"github.com/hesusruiz/vcbackend/ent/naturalperson"
+	"github.com/hesusruiz/vcbackend/ent/predicate"
 )
 
 // NaturalPersonDelete is the builder for deleting a NaturalPerson entity.

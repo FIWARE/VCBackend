@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcissuer/ent/predicate"
-	"github.com/hesusruiz/vcissuer/ent/privatekey"
+	"github.com/hesusruiz/vcbackend/ent/predicate"
+	"github.com/hesusruiz/vcbackend/ent/privatekey"
 )
 
 // PrivateKeyDelete is the builder for deleting a PrivateKey entity.

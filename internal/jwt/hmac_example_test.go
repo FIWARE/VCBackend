@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/hesusruiz/vcissuer/internal/jwt"
+	"github.com/hesusruiz/vcbackend/internal/jwt"
 )
 
 // For HMAC signing method, the key can be any []byte. It is recommended to generate

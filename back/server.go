@@ -1,9 +1,9 @@
 package back
 
 import (
-	"github.com/hesusruiz/vcissuer/back/handlers"
-	"github.com/hesusruiz/vcissuer/back/operations"
-	"github.com/hesusruiz/vcissuer/vault"
+	"github.com/hesusruiz/vcbackend/back/handlers"
+	"github.com/hesusruiz/vcbackend/back/operations"
+	"github.com/hesusruiz/vcbackend/vault"
 	"github.com/hesusruiz/vcutils/yaml"
 
 	"github.com/gofiber/fiber/v2"

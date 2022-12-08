@@ -9,11 +9,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/hesusruiz/vcissuer/ent"
-	"github.com/hesusruiz/vcissuer/ent/did"
-	"github.com/hesusruiz/vcissuer/ent/user"
-	"github.com/hesusruiz/vcissuer/internal/jwk"
-	"github.com/hesusruiz/vcissuer/internal/jwt"
+	"github.com/hesusruiz/vcbackend/ent"
+	"github.com/hesusruiz/vcbackend/ent/did"
+	"github.com/hesusruiz/vcbackend/ent/user"
+	"github.com/hesusruiz/vcbackend/internal/jwk"
+	"github.com/hesusruiz/vcbackend/internal/jwt"
 	"github.com/hesusruiz/vcutils/yaml"
 	"golang.org/x/crypto/bcrypt"
 

@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/hesusruiz/vcissuer/ent/credential"
-	"github.com/hesusruiz/vcissuer/ent/user"
+	"github.com/hesusruiz/vcbackend/ent/credential"
+	"github.com/hesusruiz/vcbackend/ent/user"
 )
 
 // Credential is the model entity for the Credential schema.

@@ -5,8 +5,8 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/hesusruiz/vcissuer/internal/jwt"
-	"github.com/hesusruiz/vcissuer/vault"
+	"github.com/hesusruiz/vcbackend/internal/jwt"
+	"github.com/hesusruiz/vcbackend/vault"
 	"github.com/hesusruiz/vcutils/yaml"
 	zlog "github.com/rs/zerolog/log"
 )

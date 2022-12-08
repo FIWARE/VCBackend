@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/hesusruiz/vcissuer/ent/naturalperson"
+	"github.com/hesusruiz/vcbackend/ent/naturalperson"
 )
 
 // NaturalPerson is the model entity for the NaturalPerson schema.

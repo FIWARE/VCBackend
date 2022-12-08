@@ -5,13 +5,13 @@ package ent
 import (
 	"time"
 
-	"github.com/hesusruiz/vcissuer/ent/credential"
-	"github.com/hesusruiz/vcissuer/ent/did"
-	"github.com/hesusruiz/vcissuer/ent/naturalperson"
-	"github.com/hesusruiz/vcissuer/ent/privatekey"
-	"github.com/hesusruiz/vcissuer/ent/publickey"
-	"github.com/hesusruiz/vcissuer/ent/schema"
-	"github.com/hesusruiz/vcissuer/ent/user"
+	"github.com/hesusruiz/vcbackend/ent/credential"
+	"github.com/hesusruiz/vcbackend/ent/did"
+	"github.com/hesusruiz/vcbackend/ent/naturalperson"
+	"github.com/hesusruiz/vcbackend/ent/privatekey"
+	"github.com/hesusruiz/vcbackend/ent/publickey"
+	"github.com/hesusruiz/vcbackend/ent/schema"
+	"github.com/hesusruiz/vcbackend/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code

@@ -9,9 +9,9 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/google/uuid"
-	"github.com/hesusruiz/vcissuer/ent"
-	"github.com/hesusruiz/vcissuer/internal/jwk"
-	"github.com/hesusruiz/vcissuer/internal/jwt"
+	"github.com/hesusruiz/vcbackend/ent"
+	"github.com/hesusruiz/vcbackend/internal/jwk"
+	"github.com/hesusruiz/vcbackend/internal/jwt"
 	"github.com/hesusruiz/vcutils/yaml"
 	zlog "github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"

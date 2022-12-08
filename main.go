@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hesusruiz/vcissuer/back/handlers"
-	"github.com/hesusruiz/vcissuer/back/operations"
-	"github.com/hesusruiz/vcissuer/vault"
+	"github.com/hesusruiz/vcbackend/back/handlers"
+	"github.com/hesusruiz/vcbackend/back/operations"
+	"github.com/hesusruiz/vcbackend/vault"
 	"github.com/hesusruiz/vcutils/yaml"
 
 	"flag"
@@ -74,7 +74,7 @@ func main() {
 func run() {
 	var err error
 
-	// Create a the server instance
+	// Create the server instance
 	s := Server{}
 
 	// Read configuration file

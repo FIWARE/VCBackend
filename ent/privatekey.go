@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/hesusruiz/vcissuer/ent/privatekey"
-	"github.com/hesusruiz/vcissuer/ent/user"
+	"github.com/hesusruiz/vcbackend/ent/privatekey"
+	"github.com/hesusruiz/vcbackend/ent/user"
 )
 
 // PrivateKey is the model entity for the PrivateKey schema.

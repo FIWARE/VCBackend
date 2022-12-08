@@ -10,12 +10,12 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/hesusruiz/vcissuer/ent/credential"
-	"github.com/hesusruiz/vcissuer/ent/did"
-	"github.com/hesusruiz/vcissuer/ent/naturalperson"
-	"github.com/hesusruiz/vcissuer/ent/privatekey"
-	"github.com/hesusruiz/vcissuer/ent/publickey"
-	"github.com/hesusruiz/vcissuer/ent/user"
+	"github.com/hesusruiz/vcbackend/ent/credential"
+	"github.com/hesusruiz/vcbackend/ent/did"
+	"github.com/hesusruiz/vcbackend/ent/naturalperson"
+	"github.com/hesusruiz/vcbackend/ent/privatekey"
+	"github.com/hesusruiz/vcbackend/ent/publickey"
+	"github.com/hesusruiz/vcbackend/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.

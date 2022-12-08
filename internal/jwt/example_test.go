@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hesusruiz/vcissuer/internal/jwt"
+	"github.com/hesusruiz/vcbackend/internal/jwt"
 )
 
 // Example (atypical) using the RegisteredClaims type by itself to parse a token.

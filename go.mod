@@ -1,4 +1,4 @@
-module github.com/hesusruiz/vcissuer
+module github.com/hesusruiz/vcbackend
 
 go 1.19
 

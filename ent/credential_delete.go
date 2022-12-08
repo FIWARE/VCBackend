@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcissuer/ent/credential"
-	"github.com/hesusruiz/vcissuer/ent/predicate"
+	"github.com/hesusruiz/vcbackend/ent/credential"
+	"github.com/hesusruiz/vcbackend/ent/predicate"
 )
 
 // CredentialDelete is the builder for deleting a Credential entity.

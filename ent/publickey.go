@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/hesusruiz/vcissuer/ent/publickey"
+	"github.com/hesusruiz/vcbackend/ent/publickey"
 )
 
 // PublicKey is the model entity for the PublicKey schema.
