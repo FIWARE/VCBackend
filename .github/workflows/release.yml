@@ -52,7 +52,7 @@ jobs:
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: dsba-pdp
+          image: vcbackend
           tags: latest ${{ github.sha }} ${{needs.generate-version.outputs.version}}
           dockerfiles: |
             ./Dockerfile
