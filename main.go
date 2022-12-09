@@ -68,14 +68,14 @@ type Server struct {
 }
 
 func main() {
-	run()
+	BackendServer()
 }
 
-func run() {
+func BackendServer() {
 	var err error
 
 	// Create the server instance
-	s := Server{}
+	s := &Server{}
 
 	// Read configuration file
 	cfg := readConfiguration(*configFile)
@@ -149,16 +149,6 @@ func run() {
 	// CORS
 	s.Use(cors.New())
 
-	// CSRF
-	csrfHandler := csrf.New(csrf.Config{
-		KeyLookup:      "form:_csrf",
-		ContextKey:     "csrftoken",
-		CookieName:     "csrf_",
-		CookieSameSite: "Strict",
-		Expiration:     1 * time.Hour,
-		KeyGenerator:   utils.UUID,
-	})
-
 	// Create a storage entry for logon expiration
 	s.storage = memory.New()
 	defer s.storage.Close()
@@ -171,13 +161,42 @@ func run() {
 	s.Get("/", s.HandleHome)
 	s.Get("/issuer", s.HandleIssuerHome)
 	s.Get("/verifier", s.HandleVerifierHome)
-	s.Get("/stop", s.HandleStop)
 
-	// ##########################
-	// Issuer routes
+	// WARNING! This is just for development. Disable this in production by using the config file setting
+	if cfg.String("server.environment") == "development" {
+		s.Get("/stop", s.HandleStop)
+	}
+
+	// Setup the Issuer, Wallet and Verifier routes
+	setupIssuer(s)
+	setupEnterpriseWallet(s)
+	setupVerifier(s)
+
+	// Setup static files
+	s.Static("/static", cfg.String("server.staticDir", defaultStaticDir))
+
+	// Start the server
+	log.Fatal(s.Listen(cfg.String("server.listenAddress")))
+
+}
+
+// setupIssuer creates and setups the Issuer routes
+func setupIssuer(s *Server) {
+
+	// CSRF for protecting the forms
+	csrfHandler := csrf.New(csrf.Config{
+		KeyLookup:      "form:_csrf",
+		ContextKey:     "csrftoken",
+		CookieName:     "csrf_",
+		CookieSameSite: "Strict",
+		Expiration:     1 * time.Hour,
+		KeyGenerator:   utils.UUID,
+	})
+
+	// Define the prefix for Issuer routes
 	issuerRoutes := s.Group(issuerPrefix)
 
-	// Handle new credential
+	// Forms for new credential
 	issuerRoutes.Get("/newcredential", csrfHandler, s.IssuerPageNewCredentialFormDisplay)
 	issuerRoutes.Post("/newcredential", csrfHandler, s.IssuerPageNewCredentialFormPost)
 
@@ -193,27 +212,6 @@ func run() {
 	// Get a credential given its ID
 	issuerRoutes.Get("/credential/:id", s.IssuerAPICredential)
 
-	// ###########################
-	// Verifier routes
-	verifierRoutes := s.Group(verifierPrefix)
-
-	verifierRoutes.Get("/displayqr", s.VerifierPageDisplayQRSIOP)
-	verifierRoutes.Get("/loginexpired", s.VerifierPageLoginExpired)
-	verifierRoutes.Get("/startsiopsamedevice", s.VerifierPageStartSIOPSameDevice)
-	verifierRoutes.Get("/receivecredential/:state", s.VerifierPageReceiveCredential)
-	verifierRoutes.Get("/accessprotectedservice", s.VerifierPageAccessProtectedService)
-
-	verifierRoutes.Get("/poll/:state", s.VerifierAPIPoll)
-	verifierRoutes.Get("/startsiop", s.VerifierAPIStartSIOP)
-	verifierRoutes.Post("/authenticationresponse", s.VerifierAPIAuthenticationResponse)
-
-	// ########################################
-	// Wallet routes
-	walletRoutes := s.Group(walletPrefix)
-
-	walletRoutes.Get("/selectcredential", s.WalletPageSelectCredential)
-	walletRoutes.Get("/sendcredential", s.WalletPageSendCredential)
-
 	// ########################################
 	// Core routes
 	coreRoutes := s.Group(corePrefix)
@@ -225,13 +223,58 @@ func run() {
 	// Get one template
 	coreRoutes.Get("/getcredentialtemplate/:id", s.CoreAPIGetCredentialTemplate)
 
-	// ########################################
+}
 
-	// Setup static files
-	s.Static("/static", cfg.String("server.staticDir", defaultStaticDir))
+// setupVerifier creates and setups the Issuer routes
+func setupVerifier(s *Server) {
 
-	// Start the server
-	log.Fatal(s.Listen(cfg.String("server.listenAddress")))
+	// Define the prefix for Verifier routes
+	verifierRoutes := s.Group(verifierPrefix)
+
+	// Routes consist of a set of pages rendering HTML using templates and a set of APIs
+
+	// Pages
+
+	// Display a QR code for mobile wallet or a link for enterprise wallet
+	verifierRoutes.Get("/displayqr", s.VerifierPageDisplayQRSIOP)
+
+	// Error page when login session has expired without the user sending the credential
+	verifierRoutes.Get("/loginexpired", s.VerifierPageLoginExpired)
+
+	// For same-device logins (e.g., with the enterprise wallet)
+	verifierRoutes.Get("/startsiopsamedevice", s.VerifierPageStartSIOPSameDevice)
+
+	// Page displaying the received credential, after successful login
+	verifierRoutes.Get("/receivecredential/:state", s.VerifierPageReceiveCredential)
+
+	// Allow simulation of accessing protected resources, after successful login
+	verifierRoutes.Get("/accessprotectedservice", s.VerifierPageAccessProtectedService)
+
+	// APIs
+
+	// Used by the login page from the browser, to check successful login or expiration
+	verifierRoutes.Get("/poll/:state", s.VerifierAPIPoll)
+
+	// Start the SIOP flows
+	verifierRoutes.Get("/startsiop", s.VerifierAPIStartSIOP)
+	verifierRoutes.Get("/authenticationrequest", s.VerifierAPIStartSIOP)
+
+	// Used by the wallet (both enterprise and mobile) to send the VC/VP as Authentication Response
+	verifierRoutes.Post("/authenticationresponse", s.VerifierAPIAuthenticationResponse)
+
+}
+
+// setupEnterpriseWallet sreates and setups the Enterprise Wallet routes
+func setupEnterpriseWallet(s *Server) {
+
+	// Define the prefix for Wallet routes
+	walletRoutes := s.Group(walletPrefix)
+
+	// Page to display the available credentials (from the Issuer)
+	walletRoutes.Get("/selectcredential", s.WalletPageSelectCredential)
+
+	// To send a credential to the Verifier
+	walletRoutes.Get("/sendcredential", s.WalletPageSendCredential)
 
 }
 
@@ -396,48 +439,66 @@ func qrCode(template, protocol, hostname, prefix, state string) (string, error) 
 
 }
 
-func (s *Server) VerifierPageDisplayQRSIOP(c *fiber.Ctx) error {
+func createAuthenticationRequest(verifierDID string, redirect_uri string, state string) string {
 
-	// Generate the state that will be used for checking expiration
-	state := generateNonce()
-
-	// Create an entry in storage that will expire in 2 minutes
-	// The entry is identified by the nonce
-	// s.storage.Set(state, []byte("pending"), 2*time.Minute)
-	s.storage.Set(state, []byte("pending"), 200*time.Second)
-
-	// QR code for cross-device SIOP
-
+	// This specifies the type of credential that the Verifier will accept
+	// TODO: In this use case it is hardcoded, which is enough if the Verifier is simple and uses
+	// only one type of credential for authentication its users.
 	const scope = "dsba.credentials.presentation.PacketDeliveryService"
-	const response_type = "vp_token"
-	redirect_uri := c.Protocol() + "://" + c.Hostname() + verifierPrefix + "/authenticationresponse"
 
+	// The response type should be 'vp_token'
+	const response_type = "vp_token"
+
+	// Response mode should be 'post'
+	const response_mode = "post"
+
+	// We use a template to generate the final string
 	template := "openid://?scope={{scope}}" +
 		"&response_type={{response_type}}" +
-		"&response_mode=post" +
+		"&response_mode={{response_mode}}" +
 		"&client_id={{client_id}}" +
 		"&redirect_uri={{redirect_uri}}" +
 		"&state={{state}}" +
 		"&nonce={{nonce}}"
 
 	t := fasttemplate.New(template, "{{", "}}")
-	str := t.ExecuteString(map[string]interface{}{
+	authRequest := t.ExecuteString(map[string]interface{}{
 		"scope":         scope,
 		"response_type": response_type,
-		"client_id":     s.verifierDID,
+		"response_mode": response_mode,
+		"client_id":     verifierDID,
 		"redirect_uri":  redirect_uri,
 		"state":         state,
 		"nonce":         generateNonce(),
 	})
-	fmt.Println(str)
 
-	// Create the QR
-	png, err := qrcode.Encode(str, qrcode.Medium, 256)
+	return authRequest
+
+}
+
+func (s *Server) VerifierPageDisplayQRSIOP(c *fiber.Ctx) error {
+
+	// Generate the state that will be used for checking expiration and also successful logon
+	state := generateNonce()
+
+	// Create an entry in storage that will expire.
+	// The entry is identified by the nonce
+	s.storage.Set(state, []byte("pending"), 200*time.Second)
+
+	// This is the endpoint inside the QR that the wallet will use to send the VC/VP
+	redirect_uri := c.Protocol() + "://" + c.Hostname() + verifierPrefix + "/authenticationresponse"
+
+	// Create the Authentication Request
+	authRequest := createAuthenticationRequest(s.verifierDID, redirect_uri, state)
+	s.logger.Info("AuthRequest", authRequest)
+
+	// Create the QR code for cross-device SIOP
+	png, err := qrcode.Encode(authRequest, qrcode.Medium, 256)
 	if err != nil {
 		return err
 	}
 
-	// Convert to a dataURL
+	// Convert the image data to a dataURL
 	base64Img := base64.StdEncoding.EncodeToString(png)
 	base64Img = "data:image/png;base64," + base64Img
 
@@ -451,6 +512,32 @@ func (s *Server) VerifierPageDisplayQRSIOP(c *fiber.Ctx) error {
 		"state":          state,
 	}
 	return c.Render("verifier_present_qr", m)
+}
+
+// VerifierAPIAuthenticationResponseVP receives a VP, extracts the VC and display a page
+func (s *Server) VerifierAPIAuthenticationResponseVP(c *fiber.Ctx) error {
+
+	// Get the state, which indicates the login session to which this request belongs
+	state := c.Query("state")
+
+	// We should receive the Verifiable Presentation in the body as JSON
+	body := c.Body()
+	fmt.Println(string(body))
+
+	// Decode into a map
+	vp, err := yaml.ParseJson(string(body))
+	if err != nil {
+		s.logger.Errorw("invalid vp received", zap.Error(err))
+		return err
+	}
+
+	credential := vp.String("credential")
+	// Validate the credential
+
+	// Set the credential in storage, and wait for the polling from client
+	s.storage.Set(state, []byte(credential), 10*time.Second)
+
+	return c.SendString("ok")
 }
 
 func (s *Server) VerifierAPIPoll(c *fiber.Ctx) error {
