@@ -3,8 +3,8 @@ package operations
 import (
 	"fmt"
 
+	"github.com/fiware/vcbackend/vault"
 	"github.com/gofiber/fiber/v2"
-	"github.com/hesusruiz/vcbackend/vault"
 	"go.uber.org/zap"
 )
 

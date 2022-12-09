@@ -7,14 +7,14 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hesusruiz/vcbackend/ent/migrate"
+	"github.com/fiware/vcbackend/ent/migrate"
 
-	"github.com/hesusruiz/vcbackend/ent/credential"
-	"github.com/hesusruiz/vcbackend/ent/did"
-	"github.com/hesusruiz/vcbackend/ent/naturalperson"
-	"github.com/hesusruiz/vcbackend/ent/privatekey"
-	"github.com/hesusruiz/vcbackend/ent/publickey"
-	"github.com/hesusruiz/vcbackend/ent/user"
+	"github.com/fiware/vcbackend/ent/credential"
+	"github.com/fiware/vcbackend/ent/did"
+	"github.com/fiware/vcbackend/ent/naturalperson"
+	"github.com/fiware/vcbackend/ent/privatekey"
+	"github.com/fiware/vcbackend/ent/publickey"
+	"github.com/fiware/vcbackend/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"

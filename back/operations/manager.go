@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"github.com/hesusruiz/vcbackend/vault"
+	"github.com/fiware/vcbackend/vault"
 	"github.com/hesusruiz/vcutils/yaml"
 
 	zlog "github.com/rs/zerolog/log"

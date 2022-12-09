@@ -1,4 +1,4 @@
-module github.com/hesusruiz/vcbackend
+module github.com/fiware/vcbackend
 
 go 1.19
 

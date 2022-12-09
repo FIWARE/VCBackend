@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcbackend/ent/did"
-	"github.com/hesusruiz/vcbackend/ent/predicate"
+	"github.com/fiware/vcbackend/ent/did"
+	"github.com/fiware/vcbackend/ent/predicate"
 )
 
 // DIDDelete is the builder for deleting a DID entity.

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/hesusruiz/vcbackend/ent/did"
-	"github.com/hesusruiz/vcbackend/ent/user"
+	"github.com/fiware/vcbackend/ent/did"
+	"github.com/fiware/vcbackend/ent/user"
 )
 
 // DID is the model entity for the DID schema.

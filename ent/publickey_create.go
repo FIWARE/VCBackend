@@ -10,7 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcbackend/ent/publickey"
+	"github.com/fiware/vcbackend/ent/publickey"
 )
 
 // PublicKeyCreate is the builder for creating a PublicKey entity.

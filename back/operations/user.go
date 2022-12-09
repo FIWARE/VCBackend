@@ -4,8 +4,8 @@ import (
 	"context"
 	"crypto/rand"
 
-	"github.com/hesusruiz/vcbackend/ent"
-	"github.com/hesusruiz/vcbackend/ent/user"
+	"github.com/fiware/vcbackend/ent"
+	"github.com/fiware/vcbackend/ent/user"
 
 	"github.com/duo-labs/webauthn/protocol"
 	"github.com/duo-labs/webauthn/webauthn"

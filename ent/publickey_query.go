@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcbackend/ent/predicate"
-	"github.com/hesusruiz/vcbackend/ent/publickey"
+	"github.com/fiware/vcbackend/ent/predicate"
+	"github.com/fiware/vcbackend/ent/publickey"
 )
 
 // PublicKeyQuery is the builder for querying PublicKey entities.

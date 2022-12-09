@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcbackend/ent/credential"
-	"github.com/hesusruiz/vcbackend/ent/predicate"
-	"github.com/hesusruiz/vcbackend/ent/user"
+	"github.com/fiware/vcbackend/ent/credential"
+	"github.com/fiware/vcbackend/ent/predicate"
+	"github.com/fiware/vcbackend/ent/user"
 )
 
 // CredentialUpdate is the builder for updating Credential entities.

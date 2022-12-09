@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hesusruiz/vcbackend/back/handlers"
-	"github.com/hesusruiz/vcbackend/back/operations"
-	"github.com/hesusruiz/vcbackend/vault"
+	"github.com/fiware/vcbackend/back/handlers"
+	"github.com/fiware/vcbackend/back/operations"
+	"github.com/fiware/vcbackend/vault"
 	"github.com/hesusruiz/vcutils/yaml"
 
 	"flag"

@@ -10,8 +10,8 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcbackend/ent/privatekey"
-	"github.com/hesusruiz/vcbackend/ent/user"
+	"github.com/fiware/vcbackend/ent/privatekey"
+	"github.com/fiware/vcbackend/ent/user"
 )
 
 // PrivateKeyCreate is the builder for creating a PrivateKey entity.

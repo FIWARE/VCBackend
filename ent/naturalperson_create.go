@@ -10,9 +10,9 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hesusruiz/vcbackend/ent/credential"
-	"github.com/hesusruiz/vcbackend/ent/naturalperson"
-	"github.com/hesusruiz/vcbackend/ent/privatekey"
+	"github.com/fiware/vcbackend/ent/credential"
+	"github.com/fiware/vcbackend/ent/naturalperson"
+	"github.com/fiware/vcbackend/ent/privatekey"
 )
 
 // NaturalPersonCreate is the builder for creating a NaturalPerson entity.
