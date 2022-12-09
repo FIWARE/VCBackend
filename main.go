@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -20,6 +21,7 @@ import (
 	"log"
 
 	qrcode "github.com/skip2/go-qrcode"
+
 	"github.com/valyala/fasttemplate"
 
 	"github.com/gofiber/fiber/v2"
@@ -46,11 +48,18 @@ const verifierPrefix = "/verifier/api/v1"
 const walletPrefix = "/wallet/api/v1"
 
 var (
-	port       = flag.String("port", ":8000", "Port to listen on")
 	prod       = flag.Bool("prod", false, "Enable prefork in Production")
-	configFile = flag.String("config", defaultConfigFile, "path to configuration file")
-	password   = flag.String("pass", defaultPassword, "admin password for the server")
+	configFile = flag.String("config", LookupEnvOrString("CONFIG_FILE", defaultConfigFile), "path to configuration file")
+	password   = flag.String("pass", LookupEnvOrString("PASSWORD", defaultPassword), "admin password for the server")
 )
+
+type SSIKitConfig struct {
+	coreUrl      string
+	signatoryUrl string
+	auditorUrl   string
+	custodianUrl string
+	essifUrl     string
+}
 
 // Server is the struct holding the state of the server
 type Server struct {
@@ -65,6 +74,14 @@ type Server struct {
 	verifierDID   string
 	logger        *zap.SugaredLogger
 	storage       *memory.Storage
+	ssiKit        *SSIKitConfig
+}
+
+func LookupEnvOrString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
 }
 
 func main() {
@@ -122,14 +139,18 @@ func BackendServer() {
 	s.issuerVault.CreateUserWithKey(cfg.String("issuer.id"), cfg.String("issuer.name"), "legalperson", cfg.String("issuer.password"))
 	s.verifierVault.CreateUserWithKey(cfg.String("verifier.id"), cfg.String("verifier.name"), "legalperson", cfg.String("verifier.password"))
 
+	s.ssiKit = fromMap(cfg.Map("ssikit"))
+
+	s.logger.Infof("SSIKit is configured at: %v", s.ssiKit)
+
 	// Create the DIDs for the issuer and verifier
-	s.issuerDID, err = operations.SSIKitCreateDID(s.issuerVault, cfg.String("issuer.id"))
+	s.issuerDID, err = operations.SSIKitCreateDID(s.ssiKit.custodianUrl, s.issuerVault, cfg.String("issuer.id"))
 	if err != nil {
 		panic(err)
 	}
 	s.logger.Infow("IssuerDID created", "did", s.issuerDID)
 
-	s.verifierDID, err = operations.SSIKitCreateDID(s.verifierVault, cfg.String("verifier.id"))
+	s.verifierDID, err = operations.SSIKitCreateDID(s.ssiKit.custodianUrl, s.verifierVault, cfg.String("verifier.id"))
 	if err != nil {
 		panic(err)
 	}
@@ -279,6 +300,30 @@ func setupEnterpriseWallet(s *Server) {
 	// To send a credential to the Verifier
 	walletRoutes.Get("/sendcredential", s.WalletPageSendCredential)
 
+}
+
+func fromMap(configMap map[string]any) (skc *SSIKitConfig) {
+	coreUrl, ok := configMap["coreURL"]
+	if !ok {
+		panic(errors.New("no_core_url"))
+	}
+	custodianUrl, ok := configMap["custodianURL"]
+	if !ok {
+		panic(errors.New("no_custodian_url"))
+	}
+	signatoryUrl, ok := configMap["signatoryURL"]
+	if !ok {
+		panic(errors.New("no_signatory_url"))
+	}
+	essifUrl, ok := configMap["essifURL"]
+	if !ok {
+		panic(errors.New("no_essif_url"))
+	}
+	auditorUrl, ok := configMap["auditorURL"]
+	if !ok {
+		panic(errors.New("no_auditor_url"))
+	}
+	return &SSIKitConfig{coreUrl: coreUrl.(string), signatoryUrl: signatoryUrl.(string), auditorUrl: auditorUrl.(string), essifUrl: essifUrl.(string), custodianUrl: custodianUrl.(string)}
 }
 
 func (s *Server) HandleHome(c *fiber.Ctx) error {
@@ -988,7 +1033,7 @@ func (s *Server) IssuerPageNewCredentialFormPost(c *fiber.Ctx) error {
 	}
 
 	// Call the issuer of SSI Kit
-	agent := fiber.Post("http://localhost:7001/v1/credentials/issue")
+	agent := fiber.Post(s.ssiKit.signatoryUrl + "/v1/credentials/issue")
 
 	config := fiber.Map{
 		"issuerDid":  issuerDID,
@@ -1109,7 +1154,7 @@ func (srv *Server) CoreAPICreateDID(c *fiber.Ctx) error {
 	// body := c.Body()
 
 	// Call the SSI Kit
-	agent := fiber.Post("http://localhost:7003/did/create")
+	agent := fiber.Post(srv.ssiKit.custodianUrl + "/did/create")
 	bodyRequest := fiber.Map{
 		"method": "key",
 	}
@@ -1129,11 +1174,8 @@ func (srv *Server) CoreAPICreateDID(c *fiber.Ctx) error {
 
 func (srv *Server) CoreAPIListCredentialTemplates(c *fiber.Ctx) error {
 
-	signatory := srv.cfg.String("ssikit.signatoryURL")
-	fmt.Println("signatory", signatory)
-
 	// Call the SSI Kit
-	agent := fiber.Get(signatory + "/v1/templates")
+	agent := fiber.Get(srv.ssiKit.signatoryUrl + "/v1/templates")
 	agent.Set("accept", "application/json")
 	_, returnBody, errors := agent.Bytes()
 	if len(errors) > 0 {
@@ -1153,11 +1195,8 @@ func (srv *Server) CoreAPIGetCredentialTemplate(c *fiber.Ctx) error {
 		return fmt.Errorf("no template id specified")
 	}
 
-	signatory := srv.cfg.String("ssikit.signatoryURL")
-	fmt.Println("signatory", signatory)
-
 	// Call the SSI Kit
-	agent := fiber.Get(signatory + "/v1/templates/" + id)
+	agent := fiber.Get(srv.ssiKit.signatoryUrl + "/v1/templates/" + id)
 	agent.Set("accept", "application/json")
 	_, returnBody, errors := agent.Bytes()
 	if len(errors) > 0 {

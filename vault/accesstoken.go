@@ -37,8 +37,10 @@ func (v *Vault) CreateAccessToken(credData string, issuerDID string) (json.RawMe
 		return nil, err
 	}
 
+	jwt := map[string]any{"verifiableCredential": data.Data()}
+
 	// Sign the credential data with the private key
-	signedString, err := v.SignWithJWK(privateJWK, data.Data())
+	signedString, err := v.SignWithJWK(privateJWK, jwt)
 	if err != nil {
 		return nil, err
 	}
