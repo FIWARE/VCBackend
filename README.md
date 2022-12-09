@@ -12,7 +12,7 @@ Clone the repository:
 git clone git@github.com:hesusruiz/VCBackend.git
 ```
 
-Before running VCBackend you need to have accessible the endpoints implemented by [VCWaltid](https://github.com/hesusruiz/VCWaltid). Please install an run VCWaltid following the instructions there. The endpoints and ports required from VCBackend are preconfigured to match the ones from VCWaltid without any change. If you do require changes, they can be setup in the configuration file in `configs\server.yaml`.
+Before running VCBackend you need to have accessible the endpoints implemented by [VCWaltid](https://github.com/FIWARE/VCWaltid). Please install an run VCWaltid following the instructions there. The endpoints and ports required from VCBackend are preconfigured to match the ones from VCWaltid without any change. If you do require changes, they can be setup in the configuration file in `configs\server.yaml`.
 
 ## Running
 
