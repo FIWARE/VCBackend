@@ -183,6 +183,9 @@ func BackendServer() {
 // setupIssuer creates and setups the Issuer routes
 func setupIssuer(s *Server) {
 
+	// // Connect to the Issuer store engine
+	// s.issuerVault = vault.Must(vault.New(yaml.New(s.cfg.Map("issuer"))))
+
 	// CSRF for protecting the forms
 	csrfHandler := csrf.New(csrf.Config{
 		KeyLookup:      "form:_csrf",
@@ -512,6 +515,36 @@ func (s *Server) VerifierPageDisplayQRSIOP(c *fiber.Ctx) error {
 		"state":          state,
 	}
 	return c.Render("verifier_present_qr", m)
+}
+
+func (s *Server) WalletAPICreatePresentation(creds []string, holder string) (string, error) {
+
+	type inputCreatePresentation struct {
+		Vcs       []string `json:"vcs,omitempty"`
+		HolderDid string   `json:"holderDid,omitempty"`
+	}
+
+	postBody := inputCreatePresentation{
+		Vcs:       creds,
+		HolderDid: holder,
+	}
+
+	custodianURL := s.cfg.String("ssikit.custodianURL")
+
+	// Call the SSI Kit
+	agent := fiber.Post(custodianURL + "/credentials/present")
+	agent.Set("accept", "application/json")
+	agent.JSON(postBody)
+	_, returnBody, errors := agent.Bytes()
+	if len(errors) > 0 {
+		s.logger.Errorw("error calling SSI Kit", zap.Errors("errors", errors))
+		return "", fmt.Errorf("error calling SSI Kit: %v", errors[0])
+	}
+
+	fmt.Println("presentation", string(returnBody))
+
+	return string(returnBody), nil
+
 }
 
 // VerifierAPIAuthenticationResponseVP receives a VP, extracts the VC and display a page
