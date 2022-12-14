@@ -123,7 +123,7 @@ func Example_useTokenViaHTTP() {
 	// Make request.  See func restrictedHandler for example request processor
 	req, err := http.NewRequest("GET", fmt.Sprintf("http://localhost:%v/restricted", serverPort), nil)
 	fatal(err)
-	req.Header.Set("Authentication", fmt.Sprintf("Bearer %v", token))
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", token))
 	res, err := http.DefaultClient.Do(req)
 	fatal(err)
 
