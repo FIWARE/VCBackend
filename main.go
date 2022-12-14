@@ -21,7 +21,6 @@ import (
 	"log"
 
 	qrcode "github.com/skip2/go-qrcode"
-
 	"github.com/valyala/fasttemplate"
 
 	"github.com/gofiber/fiber/v2"
@@ -256,6 +255,10 @@ func setupVerifier(s *Server) {
 	verifierRoutes := s.Group(verifierPrefix)
 
 	// Routes consist of a set of pages rendering HTML using templates and a set of APIs
+
+	// The JWKS endpoint
+	jwks_uri := s.cfg.String("verifier.uri_prefix") + s.cfg.String("verifier.jwks_uri")
+	s.Get(jwks_uri, s.VerifierAPIJWKS)
 
 	// Pages
 
@@ -616,6 +619,18 @@ func (s *Server) VerifierAPIAuthenticationResponseVP(c *fiber.Ctx) error {
 	s.storage.Set(state, []byte(credential), 10*time.Second)
 
 	return c.SendString("ok")
+}
+
+func (s *Server) VerifierAPIJWKS(c *fiber.Ctx) error {
+
+	// Get public keys from Verifier
+	pubkeys, err := s.verifierVault.PublicKeysForUser(s.cfg.String("verifier.id"))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(pubkeys)
+
 }
 
 func (s *Server) VerifierAPIPoll(c *fiber.Ctx) error {
