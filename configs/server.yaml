@@ -24,6 +24,8 @@ verifier:
   store:
     driverName: "sqlite3"
     dataSourceName: "file:verifier.sqlite?mode=rwc&cache=shared&_fk=1"
+  uri_prefix: /verifier
+  jwks_uri: /.well-known/jwks_uri
   protectedResource:
     url: "https://www.google.com"
 
