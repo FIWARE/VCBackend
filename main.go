@@ -279,6 +279,8 @@ func setupVerifier(s *Server) {
 	// Used by the login page from the browser, to check successful login or expiration
 	verifierRoutes.Get("/poll/:state", s.VerifierAPIPoll)
 
+	verifierRoutes.Get("/token/:state", s.VerifierAPIToken)
+
 	// Start the SIOP flows
 	verifierRoutes.Get("/startsiop", s.VerifierAPIStartSIOP)
 	verifierRoutes.Get("/authenticationrequest", s.VerifierAPIStartSIOP)
@@ -601,6 +603,7 @@ func (s *Server) VerifierAPIAuthenticationResponseVP(c *fiber.Ctx) error {
 	// We should receive the Verifiable Presentation in the body as JSON
 	body := c.Body()
 	fmt.Println(string(body))
+	fmt.Println(string(state))
 
 	// Decode into a map
 	vp, err := yaml.ParseJson(string(body))
@@ -630,6 +633,31 @@ func (s *Server) VerifierAPIPoll(c *fiber.Ctx) error {
 	} else {
 		return c.SendString(string(status))
 	}
+
+}
+
+func (s *Server) VerifierAPIToken(c *fiber.Ctx) error {
+
+	// get the state
+	state := c.Params("state")
+
+	// get the credential from the storage
+	rawCred, _ := s.storage.Get(state)
+	if len(rawCred) == 0 {
+
+		c.Status(403)
+		return errors.New("No_such_credential")
+	}
+
+	claims := string(rawCred)
+
+	// Create an access token from the credential
+	accessToken, err := s.issuerVault.CreateAccessToken(claims, s.cfg.String("issuer.id"))
+	if err != nil {
+		return err
+	}
+
+	return c.SendString(string(accessToken))
 
 }
 
@@ -718,7 +746,7 @@ func (s *Server) VerifierAPIAuthenticationResponse(c *fiber.Ctx) error {
 	// We should receive the credential in the body as JSON
 	body := c.Body()
 	fmt.Println(string(body))
-
+	fmt.Println("State " + state)
 	// Decode into a map
 	cred, err := yaml.ParseJson(string(body))
 	if err != nil {
