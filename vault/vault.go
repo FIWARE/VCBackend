@@ -402,6 +402,48 @@ func (v *Vault) PrivateKeysForUser(userid string) (keys []*jwk.JWK, err error) {
 	return keys, nil
 }
 
+// PublicKeysForUser returns all the public keys belonging to the userid
+func (v *Vault) PublicKeysForUser(userid string) (keys []*jwk.JWK, err error) {
+
+	// Return an error if the user does not exist
+	usr, err := v.UserByID(userid)
+	if err != nil {
+		zlog.Error().Err(err).Str("id", userid).Send()
+		return nil, err
+	}
+
+	// Get all the private keys
+	entKeys, err := usr.QueryKeys().All(context.Background())
+	if err != nil {
+		zlog.Error().Err(err).Str("id", userid).Send()
+		return nil, err
+	}
+
+	// Convert the keys to the JKW format
+	keys = make([]*jwk.JWK, len(entKeys))
+
+	for i, k := range entKeys {
+		jwkKey, err := jwk.NewFromBytes(k.Jwk)
+		if err != nil {
+			continue
+		}
+		keys[i] = jwkKey
+	}
+
+	// Return an error if no keys were found
+	if len(keys) == 0 {
+		return nil, fmt.Errorf("the user has no private keys")
+	}
+
+	// Convert the keys to public keys
+	pubkeys := make([]*jwk.JWK, len(keys))
+	for i, k := range keys {
+		pubkeys[i] = k.PublicJWKKey()
+	}
+
+	return pubkeys, nil
+}
+
 func (v *Vault) PrivateKeyByID(id string) (jwkKey *jwk.JWK, err error) {
 
 	// Retrieve key by its ID, which should be unique

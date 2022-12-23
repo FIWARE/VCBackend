@@ -79,8 +79,8 @@ func TestNumericDate_MarshalJSON(t *testing.T) {
 	}{
 		{time.Unix(5243700879, 0), "5243700879", time.Second},
 		{time.Unix(5243700879, 0), "5243700879.000", time.Millisecond},
-		{time.Unix(5243700879, 0), "5243700879.000001", time.Microsecond},
-		{time.Unix(5243700879, 0), "5243700879.000000954", time.Nanosecond},
+		{time.Unix(5243700879, 0), "5243700879.000000", time.Microsecond},
+		{time.Unix(5243700879, 0), "5243700879.000000000", time.Nanosecond},
 		//
 		{time.Unix(4239425898, 0), "4239425898", time.Second},
 		{time.Unix(4239425898, 0), "4239425898.000", time.Millisecond},
@@ -90,12 +90,12 @@ func TestNumericDate_MarshalJSON(t *testing.T) {
 		{time.Unix(0, 1644285000210402000), "1644285000", time.Second},
 		{time.Unix(0, 1644285000210402000), "1644285000.210", time.Millisecond},
 		{time.Unix(0, 1644285000210402000), "1644285000.210402", time.Microsecond},
-		{time.Unix(0, 1644285000210402000), "1644285000.210402012", time.Nanosecond},
+		{time.Unix(0, 1644285000210402000), "1644285000.210402000", time.Nanosecond},
 		//
 		{time.Unix(0, 1644285315063096000), "1644285315", time.Second},
 		{time.Unix(0, 1644285315063096000), "1644285315.063", time.Millisecond},
 		{time.Unix(0, 1644285315063096000), "1644285315.063096", time.Microsecond},
-		{time.Unix(0, 1644285315063096000), "1644285315.063096046", time.Nanosecond},
+		{time.Unix(0, 1644285315063096000), "1644285315.063096000", time.Nanosecond},
 	}
 
 	for i, tc := range tt {
