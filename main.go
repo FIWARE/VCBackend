@@ -651,6 +651,7 @@ func (s *Server) VerifierAPIPoll(c *fiber.Ctx) error {
 
 }
 
+// retrieve token for the given session("state"-paramter)
 func (s *Server) VerifierAPIToken(c *fiber.Ctx) error {
 
 	// get the state
