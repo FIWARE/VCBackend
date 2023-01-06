@@ -11,6 +11,7 @@ import (
 
 	"github.com/fiware/vcbackend/back/handlers"
 	"github.com/fiware/vcbackend/back/operations"
+	"github.com/fiware/vcbackend/internal/jwk"
 	"github.com/fiware/vcbackend/vault"
 	"github.com/hesusruiz/vcutils/yaml"
 
@@ -298,6 +299,10 @@ func generateNonce() string {
 
 var sameDevice = false
 
+type jwkSet struct {
+	keys []*jwk.JWK `json:"keys"`
+}
+
 func (s *Server) VerifierAPIJWKS(c *fiber.Ctx) error {
 
 	// Get public keys from Verifier
@@ -306,7 +311,7 @@ func (s *Server) VerifierAPIJWKS(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(pubkeys)
+	return c.JSON(jwkSet{pubkeys})
 
 }
 

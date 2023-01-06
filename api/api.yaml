@@ -300,9 +300,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/JWK'
+                $ref: '#/components/schemas/JWKSet'
           
   /wallet/api/v1/selectcredential:
     get:
@@ -666,3 +664,10 @@ components:
           type: string
         D:
           type: string
+    JWKSet:
+      type: object
+      properties: 
+        keys: 
+         type: array
+         items:
+          $ref: '#/components/schemas/JWK'
