@@ -300,7 +300,7 @@ func generateNonce() string {
 var sameDevice = false
 
 type jwkSet struct {
-	keys []*jwk.JWK `json:"keys"`
+	Keys []*jwk.JWK `json:"keys"`
 }
 
 func (s *Server) VerifierAPIJWKS(c *fiber.Ctx) error {
@@ -311,7 +311,9 @@ func (s *Server) VerifierAPIJWKS(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(jwkSet{pubkeys})
+	keySet := jwkSet{pubkeys}
+
+	return c.JSON(keySet)
 
 }
 
