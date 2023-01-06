@@ -637,32 +637,32 @@ components:
     JWK:
       type: object
       properties:
-        Kid:
+        kid:
           type: string
           example: 179d7b56-6598-4045-9a32-4635e8b0f605
-        Kty:
+        kty:
           type: string
           example: EC
-        Use:
+        use:
           type: string
           example: sig
-        Alg:
+        alg:
           type: string
           example: ES256
-        Crv:
+        crv:
           type: string
           example: P-256
-        X:
+        x:
           type: string
           example: 3ctHY_0KJW5ezT-oF39t3wPX6XlggWKOSPFW8iooBXk
-        Y:
+        y:
           type: string
           example: HXA4mBHgObIE56E92yxN5bYQ27wSxlVPfuNWaY06TTI
-        N:
+        n:
           type: string
-        E:
+        e:
           type: string
-        D:
+        d:
           type: string
     JWKSet:
       type: object
