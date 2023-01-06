@@ -171,6 +171,8 @@ paths:
       tags:
         - verifier
         - api
+      parameters:
+        - $ref: '#/components/parameters/QueryState'
       operationId: VerifierPageStartSIOPSameDevice
       summary: Starts the siop flow for credentials hold by the same device
       description: When the credential is already present in the requesting browser, the same-device flow can be used. It creates the login information and then redirects to the /authenticationresponse path.
