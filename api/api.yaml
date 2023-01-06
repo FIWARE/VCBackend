@@ -287,6 +287,23 @@ paths:
                 type: string
                 enum: 
                   - "ok"
+  /verifier/.well-known/jwks_uri:
+    get: 
+      tags:
+        - verifier
+        - api
+      operationId: VerifierAPIJWKS
+      summary: Provides the public keys for the given verifier, to be used for verifing the JWTs
+      responses:
+        '200': 
+          description: The list of public keys, belonging to the issuer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JWK'
+          
   /wallet/api/v1/selectcredential:
     get:
       tags:
@@ -619,3 +636,33 @@ components:
           $ref: '#/components/schemas/Did'
         verifierDid:
           $ref: '#/components/schemas/Did'
+    JWK:
+      type: object
+      properties:
+        Kid:
+          type: string
+          example: 179d7b56-6598-4045-9a32-4635e8b0f605
+        Kty:
+          type: string
+          example: EC
+        Use:
+          type: string
+          example: sig
+        Alg:
+          type: string
+          example: ES256
+        Crv:
+          type: string
+          example: P-256
+        X:
+          type: string
+          example: 3ctHY_0KJW5ezT-oF39t3wPX6XlggWKOSPFW8iooBXk
+        Y:
+          type: string
+          example: HXA4mBHgObIE56E92yxN5bYQ27wSxlVPfuNWaY06TTI
+        N:
+          type: string
+        E:
+          type: string
+        D:
+          type: string
