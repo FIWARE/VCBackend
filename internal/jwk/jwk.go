@@ -40,13 +40,13 @@ const (
 )
 
 type JWK struct {
-	Kid string
-	Kty string
-	Use string
-	Alg string
+	Kid string `json:"kid"`
+	Kty string `json:"kty"`
+	Use string `json:"use"`
+	Alg string `json:"alg"`
 
 	// Elliptic curve, common to Public and Private keys
-	Crv string
+	Crv string `json:"crv"`
 	X   string
 	Y   string
 
