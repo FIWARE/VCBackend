@@ -167,7 +167,7 @@ func (v *Verifier) VerifierPageReceiveCredential(c *fiber.Ctx) error {
 	claims := string(rawCred)
 
 	// Create an access token from the credential
-	accessToken, err := v.server.issuerVault.CreateAccessToken(claims, v.server.cfg.String("issuer.id"))
+	accessToken, err := v.server.issuerVault.CreateAccessToken(claims, v.server.cfg.String("verifier.id"))
 	if err != nil {
 		return err
 	}
@@ -271,7 +271,7 @@ func (v *Verifier) VerifierAPIToken(c *fiber.Ctx) error {
 	claims := string(rawCred)
 
 	// Create an access token from the credential
-	accessToken, err := v.server.issuerVault.CreateAccessToken(claims, v.server.cfg.String("issuer.id"))
+	accessToken, err := v.server.issuerVault.CreateAccessToken(claims, v.server.cfg.String("verifier.id"))
 	if err != nil {
 		v.server.logger.Infof("Was not able to create the token. Err: %s", err)
 		c.Status(500)
