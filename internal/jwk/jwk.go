@@ -40,22 +40,22 @@ const (
 )
 
 type JWK struct {
-	Kid string
-	Kty string
-	Use string
-	Alg string
+	Kid string `json:"kid"`
+	Kty string `json:"kty"`
+	Use string `json:"use"`
+	Alg string `json:"alg"`
 
 	// Elliptic curve, common to Public and Private keys
-	Crv string
-	X   string
-	Y   string
+	Crv string `json:"crv"`
+	X   string `json:"x"`
+	Y   string `json:"y"`
 
 	// RSA curve, common to Public and Private keys
-	N string // Modulus. Base64urlUInt-encoded
-	E string // Exponent. Base64urlUInt-encoded
+	N string `json:"n"` // Modulus. Base64urlUInt-encoded
+	E string `json:"e"` // Exponent. Base64urlUInt-encoded
 
 	// For Private Keys, both Elliptic and RSA
-	D string
+	D string `json:"d"`
 }
 
 func NewEthereum() (*JWK, error) {
