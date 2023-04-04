@@ -1,3 +1,6 @@
+> :warning: This repository is not longer maintained. I you search for a component to verify credentials, see [VCVerifier](https://github.com/FIWARE/VCVerifier). If you need a component to issue credentials, see the [Keycloak-VC-Issuer](https://github.com/wistefan/keycloak-vc-issuer).
+
+
 # VCBackend
 
 VCBackend includes in a single binary demo versions of Issuer, Verifier and Wallet (same-device only, for a cross-device wallet please see [VCWallet](https://github.com/hesusruiz/VCWallet)).
